@@ -16,7 +16,7 @@ export default function HomePage() {
   };
 
   return (
-    <PageTransition>
+    <PageTransition transitionType="purple">
       <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-black via-[#392e5c] to-[#6441a5]">
         <form onSubmit={handleSubmit} className="container max-w-md flex flex-col items-center justify-center gap-8 px-8 py-12 mx-4 rounded-3xl bg-black/20 backdrop-blur-md shadow-2xl shadow-purple-500/20 border border-white/10">
           <h1 className="text-6xl font-extrabold tracking-tight sm:text-[5rem]">
