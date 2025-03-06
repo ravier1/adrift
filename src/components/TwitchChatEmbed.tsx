@@ -7,9 +7,12 @@ interface TwitchChatEmbedProps {
 }
 
 const TwitchChatEmbed: React.FC<TwitchChatEmbedProps> = ({ channel, parent }) => {
+  // Use localhost for development, otherwise use the domain from env
+  const domain = process.env.NODE_ENV === 'development' ? 'localhost' : parent;
+
   return (
     <iframe
-      src={`https://www.twitch.tv/embed/${channel}/chat?parent=${parent}&darkpopout`}
+      src={`https://www.twitch.tv/embed/${channel}/chat?parent=${domain}&darkpopout`}
       height="100%"
       width="100%"
       frameBorder="0"
