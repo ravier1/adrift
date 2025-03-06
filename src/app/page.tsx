@@ -11,8 +11,12 @@ export default function HomePage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (youtubeStreamer && twitchStreamer) {
-      router.push(`/stream?yt=${youtubeStreamer}&tw=${twitchStreamer}`);
+      router.push(`/stream?yt=@${youtubeStreamer}&tw=${twitchStreamer}`);
     }
+  };
+
+  const handleCopy = () => {
+    setTwitchStreamer(youtubeStreamer);
   };
 
   return (
@@ -25,21 +29,35 @@ export default function HomePage() {
           </h1>
           
           <div className="flex flex-col gap-6 w-full">
-            <input
-              type="text"
-              placeholder="Enter YouTube Streamer"
-              value={youtubeStreamer}
-              onChange={(e) => setYoutubeStreamer(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 text-white placeholder-white/40 backdrop-blur-sm border border-white/20 focus:border-white/40 focus:outline-none transition-all"
-            />
+            <div className="flex flex-col gap-1">
+              <input
+                type="text"
+                placeholder="Enter YouTube username (without @)"
+                value={youtubeStreamer}
+                onChange={(e) => setYoutubeStreamer(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl bg-white/5 text-white placeholder-white/40 backdrop-blur-sm border border-white/20 focus:border-white/40 focus:outline-none transition-all"
+              />
+              <span className="text-white/50 text-sm px-1">For YouTube stream source</span>
+            </div>
             
-            <input
-              type="text"
-              placeholder="Enter Twitch Streamer"
-              value={twitchStreamer}
-              onChange={(e) => setTwitchStreamer(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white/5 text-white placeholder-white/40 backdrop-blur-sm border border-white/20 focus:border-white/40 focus:outline-none transition-all"
-            />
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="self-center p-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/20 transition-all"
+            >
+               Copy the same username ⇣
+            </button>
+
+            <div className="flex flex-col gap-1">
+              <input
+                type="text"
+                placeholder="Enter Twitch username"
+                value={twitchStreamer}
+                onChange={(e) => setTwitchStreamer(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl bg-white/5 text-white placeholder-white/40 backdrop-blur-sm border border-white/20 focus:border-white/40 focus:outline-none transition-all"
+              />
+              <span className="text-white/50 text-sm px-1">For Twitch chat integration</span>
+            </div>
             
             <button
               type="submit"
