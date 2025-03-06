@@ -21,19 +21,20 @@ const TwitchChat: React.FC<TwitchChatProps> = ({ channel }) => {
       channels: [channel],
     });
 
-    client.connect().catch(console.error);
+    // Mark promise as intentionally ignored
+    void client.connect().catch(console.error);
 
     client.on('message', (_channel, tags, message, self) => {
       if (self) return; // Ignore own messages if sending from here later
       const chatMessage: ChatMessage = {
-        username: tags.username || 'unknown',
+        username: tags.username ?? 'unknown',
         message,
       };
       setMessages((prev) => [...prev, chatMessage]);
     });
 
     return () => {
-      client.disconnect();
+      void client.disconnect().catch(console.error);
     };
   }, [channel]);
 
