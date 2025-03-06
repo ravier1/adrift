@@ -1,35 +1,44 @@
-import Link from "next/link";
+"use client";
+import { useState } from "react";
 
 export default function HomePage() {
+  const [youtubeStreamer, setYoutubeStreamer] = useState("");
+  const [twitchStreamer, setTwitchStreamer] = useState("");
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-[#2e026d] to-[#15162c] text-white">
-      <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16">
-        <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
-          Create <span className="text-[hsl(280,100%,70%)]">T3</span> App
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-black via-[#392e5c] to-[#6441a5]">
+      <div className="container max-w-md flex flex-col items-center justify-center gap-8 px-8 py-12 mx-4 rounded-3xl bg-black/20 backdrop-blur-md shadow-2xl shadow-purple-500/20 border border-white/10">
+        <h1 className="text-6xl font-extrabold tracking-tight sm:text-[5rem]">
+          <span className="text-white/90 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">Ad</span>
+          <span className="text-[#6441a5] drop-shadow-[0_0_15px_rgba(100,65,165,0.6)]">rift</span>
         </h1>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="https://create.t3.gg/en/usage/first-steps"
-            target="_blank"
+        
+        <div className="flex flex-col gap-6 w-full">
+          <input
+            type="text"
+            placeholder="Enter YouTube Streamer"
+            value={youtubeStreamer}
+            onChange={(e) => setYoutubeStreamer(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl bg-white/5 text-white placeholder-white/40 backdrop-blur-sm border border-white/20 focus:border-white/40 focus:outline-none transition-all"
+          />
+          
+          <input
+            type="text"
+            placeholder="Enter Twitch Streamer"
+            value={twitchStreamer}
+            onChange={(e) => setTwitchStreamer(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl bg-white/5 text-white placeholder-white/40 backdrop-blur-sm border border-white/20 focus:border-white/40 focus:outline-none transition-all"
+          />
+          
+          <button
+            className="group relative w-full px-8 py-4 rounded-xl bg-gradient-to-r from-white/10 to-[#6441a5]/80 text-white font-bold text-lg hover:scale-[1.02] transition-all duration-300 border border-white/20"
           >
-            <h3 className="text-2xl font-bold">First Steps →</h3>
-            <div className="text-lg">
-              Just the basics - Everything you need to know to set up your
-              database and authentication.
-            </div>
-          </Link>
-          <Link
-            className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-            href="https://create.t3.gg/en/introduction"
-            target="_blank"
-          >
-            <h3 className="text-2xl font-bold">Documentation →</h3>
-            <div className="text-lg">
-              Learn more about Create T3 App, the libraries it uses, and how to
-              deploy it.
-            </div>
-          </Link>
+            Jump In 
+            <span className="ml-2 inline-block group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300">
+              🚀
+            </span>
+            <span className="absolute -z-10 inset-0 blur-xl bg-gradient-to-r from-white/20 to-[#6441a5] opacity-50 group-hover:opacity-75 transition-opacity rounded-xl"></span>
+          </button>
         </div>
       </div>
     </main>
