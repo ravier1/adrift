@@ -21,14 +21,14 @@ const StreamContent = () => {
   const twitchStreamer = searchParams.get('tw') ?? '';
   
   return (
-    <main className="w-screen h-screen flex flex-col landscape:flex-row bg-[#18181b]">
+    <main className="w-screen h-screen flex flex-col landscape:flex-row bg-[#18181b] divide-0 overflow-hidden">
       {/* YouTube Stream - Full width on portrait, flexible width on landscape */}
-      <div className="h-[40vh] landscape:h-full landscape:flex-1 portrait:tablet:h-[60vh]">
+      <div className="h-[40vh] landscape:h-full landscape:flex-1 portrait:tablet:h-[60vh] flex">
         <YouTubeStream username={youtubeStreamer} />
       </div>
 
       {/* Twitch Chat - Fixed dimensions, only height is flexible in portrait */}
-      <div className="h-[60vh] w-full landscape:w-[340px] landscape:h-full">
+      <div className="h-[60vh] w-full landscape:w-[340px] landscape:h-full flex">
         <TwitchChatEmbed 
           channel={twitchStreamer} 
           parent={process.env.NEXT_PUBLIC_DOMAIN ?? 'localhost'} 
