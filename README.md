@@ -1,4 +1,4 @@
-# Adrift 🎥✨ [Seeking Logo Designer!]
+# Adrift 🎥✨
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/ravier1)
 
