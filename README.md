@@ -1,4 +1,4 @@
-# Adrift 🎥✨
+# Adrift 🎥✨ [Seeking Logo Designer!]
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/ravier1)
 
@@ -9,6 +9,19 @@ Adrift (from "Ad" + "rift") is a cutting-edge video player that combines YouTube
 ## About This Project
 
 This project started as a personal passion project born out of frustration 😤. I was fed up with Twitch—especially the low bitrate, excessive ads, and clunky experience on Firefox, not to mention the disorganized multi-streamer layouts. YouTube, on the other hand, delivered a superior streaming quality with better bitrate, inspiring me to create a tool that brings the best of both worlds together. I wanted a seamless, high-quality viewing experience with the energetic vibe of Twitch chat. And thus, Adrift was born! 🚀💻
+
+## Important Notice
+
+This project:
+- Is a free, open-source viewer that combines existing platform features
+- Does not modify, block, or interfere with any platform's advertising systems
+- Does not store or redistribute any content from YouTube or Twitch
+- Requires users to have their own valid YouTube and Twitch accounts
+- Complies with both YouTube and Twitch Terms of Service
+- Is not monetized or charged for in any way
+- Uses official platform APIs and embedding features only
+
+The name "Adrift" refers to moving away from traditional viewing experiences, not bypassing platform features. This project aims to enhance the viewing experience while respecting platform policies.
 
 ## Features
 
@@ -59,9 +72,16 @@ The application will run at http://localhost:3000
 * Enter Twitch Chat Username: Input your Twitch chat username to enable real-time chat integration
 * Activate Theatre Mode: Toggle theatre mode for an enhanced, immersive viewing experience
 
-## Support
+## Support & Contributions
 
+> *Note: Currently using T3 App's default logo - looking for a simple logo design if anyone wants to contribute!* 
+
+### Donations
 If you find Adrift helpful, consider supporting the project:
+- Help cover Vercel hosting costs for the public demo
+- Support development time and maintenance
+- Enable new feature implementations
+- Note: Donations are voluntary and don't provide any additional features or ad-removal capabilities
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/ravier1)
 
