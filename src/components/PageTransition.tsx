@@ -18,8 +18,8 @@ const PageTransition = ({ children, transitionType = "purple" }: PageTransitionP
           transformOrigin: ["0% 0%", "0% 0%", "100% 0%", "100% 0%"],
         }}
         transition={{ 
-          duration: 2,
-          times: [0, 0.4, 0.6, 1],
+          duration: 1.2, // Faster duration
+          times: [0, 0.3, 0.7, 1], // Adjusted timing
           ease: "easeInOut"
         }}
       >
@@ -29,7 +29,7 @@ const PageTransition = ({ children, transitionType = "purple" }: PageTransitionP
             x: ["0%", "200%"]
           }}
           transition={{
-            duration: 2,
+            duration: 1.2, // Match parent duration
             ease: "easeInOut"
           }}
         />
