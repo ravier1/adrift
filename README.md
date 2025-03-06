@@ -4,6 +4,8 @@
 
 **Live Demo:** [https://adrift-five.vercel.app/](https://adrift-five.vercel.app/)
 
+**Try with TimTheTatman:** [https://adrift-five.vercel.app/stream?yt=@timthetatman&tw=timthetatman](https://adrift-five.vercel.app/stream?yt=@timthetatman&tw=timthetatman)
+
 Adrift (from "Ad" + "rift") is a cutting-edge video player that combines YouTube streaming with Twitch chat integration. The name reflects the project's purpose - breaking away from traditional streaming platforms and their excessive advertisements. Enjoy your favorite streams in immersive theatre mode across all devices—from browsers and desktops to mobiles and tablets.
 
 ## About This Project
