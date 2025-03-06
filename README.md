@@ -1,29 +1,67 @@
-# Create T3 App
+Adrift 🎥✨ - https://adrift-five.vercel.app/
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+Adrift is a cutting-edge video player that combines YouTube streaming with Twitch chat integration. Enjoy your favorite streams in immersive theatre mode across all devices—from browsers and desktops to mobiles and tablets.
+About This Project
 
-## What's next? How do I make an app with this?
+This project started as a personal passion project born out of frustration 😤. I was fed up with Twitch—especially the low bitrate and clunky experience on Firefox, not to mention the disorganized multi-streamer layouts. YouTube, on the other hand, delivered a superior streaming quality with better bitrate, inspiring me to create a tool that brings the best of both worlds together. I wanted a seamless, high-quality viewing experience with the energetic vibe of Twitch chat. And thus, Adrift Video Player was born! 🚀💻
+Features
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+    Responsive Design: Optimized for browsers, desktops, tablets, and mobile devices.
+    YouTube Integration: Enter your YouTube username to access live or archived streams.
+    Twitch Chat Integration: Add your Twitch chat username to overlay real-time chat alongside the video.
+    Theatre Mode: Experience a distraction-free, cinema-like viewing experience.
+    Upcoming Enhancements:
+        7tv Emote Support: Enrich your chat with popular 7tv emotes.
+        Redefined Chat Experience: Seamlessly watch YouTube streams paired with parsed Twitch chat VODs.
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+Getting Started
+Prerequisites
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+    A modern web browser (Chrome, Firefox, Safari, or Edge).
+    Node.js and npm (if building from source).
+    An active internet connection.
 
-## Learn More
+Installation
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+    Clone the Repository:
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+git clone https://github.com/ravier1/adrift.git
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+Navigate to the Project Directory:
 
-## How do I deploy this?
+cd adrift-video-player
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+Install Dependencies:
+
+npm install
+
+Start the Development Server:
+
+    npm start
+
+The application will run at http://localhost:3000.
+Usage
+
+    Enter YouTube Username: Type in your YouTube username to load your stream content.
+    Enter Twitch Chat Username: Input your Twitch chat username to enable real-time chat integration.
+    Activate Theatre Mode: Toggle theatre mode for an enhanced, immersive viewing experience.
+
+For more detailed instructions, check out the documentation.
+Contributing
+
+Contributions are welcome! Please review our CONTRIBUTING.md for guidelines on submitting issues and pull requests.
+Roadmap
+
+    7tv Emote Support: Integrate support for 7tv emotes.
+    Enhanced Chat Parsing: Improve chat integration to support Twitch chat VODs alongside YouTube streams.
+    UI/UX Improvements: Continuous enhancements for a seamless viewing experience.
+
+See the issues for planned features and known bugs.
+License
+
+This project is licensed under the MIT License. See the LICENSE file for more details.
+Contact
+
+For questions, suggestions, or contributions, please open an issue on GitHub.
+
+Happy streaming with Adrift Video Player—where YouTube’s superior quality meets the lively spirit of Twitch chat! 🎉📺
