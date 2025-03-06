@@ -3,12 +3,15 @@ import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import YouTubeStream from '~/components/YoutubeStream';
 import TwitchChatEmbed from '~/components/TwitchChatEmbed';
+import PageTransition from "~/components/PageTransition";
 
 const StreamPage = () => {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <StreamContent />
-    </Suspense>
+    <PageTransition>
+      <Suspense fallback={<div>Loading...</div>}>
+        <StreamContent />
+      </Suspense>
+    </PageTransition>
   );
 };
 
