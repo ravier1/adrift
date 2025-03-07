@@ -1,6 +1,7 @@
 "use client";
 import { useSearchParams } from "next/navigation";
 import PageTransition from "~/components/PageTransition";
+import YoutubeTheatre from "~/components/YoutubeTheatre";
 
 export default function WatchContent() {
   const searchParams = useSearchParams();
@@ -17,12 +18,7 @@ export default function WatchContent() {
   return (
     <PageTransition transitionType="red">
       <div className="relative w-full h-screen">
-        <iframe
-          src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-          className="absolute inset-0 w-full h-full border-0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        />
+        <YoutubeTheatre videoId={videoId} />
       </div>
     </PageTransition>
   );
