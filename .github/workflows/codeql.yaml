@@ -32,4 +32,4 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          verbosity: 'info'
+          verbosity: 'debug' # Increased verbosity for better debugging

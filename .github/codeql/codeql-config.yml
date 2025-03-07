@@ -9,8 +9,6 @@ paths:
   - lib/
   - tests/
 
-# You can specify additional options here if needed, for example:
-# options:
-#   - name: "verbosity"
-#     value: "info"
-
+options:
+  - name: "verbosity"
+    value: "debug" # Increased verbosity for better debugging
