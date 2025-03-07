@@ -11,7 +11,7 @@ export const env = createEnv({
     YOUTUBE_API_KEY: z.string().min(1),
     GOOGLE_CLIENT_ID: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
-    PUBLIC_URL: z.string().min(1), // Add to server-side only
+    PUBLIC_URL: z.string().default("http://localhost:3000"), // Add default value
   },
 
   /**

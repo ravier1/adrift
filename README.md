@@ -1,38 +1,76 @@
-# 🚀 Adrift v0.1.2b
+# 🚀 Adrift
 
-A modern multi-platform streaming companion that lets you watch YouTube streams while keeping up with Twitch chat.
+A real-time streaming companion that lets you watch YouTube streams while chatting with your Twitch community.
 
-## Features
+## 🎭 New Feature: Theatre Mode (Beta)
 
-- 🎮 Watch YouTube streams with embedded Twitch chat
-- 🌈 Smooth page transitions and modern UI
-- 📱 Responsive design for both desktop and mobile
-- ⚡ Built with Next.js 14 and TypeScript
-- 🔄 Auto-fallback to channel uploads if live stream isn't found
-- 🎨 Dark mode by default with purple accents
-- 🚀 Sleek rocket emoji favicon for easy tab identification
+Watch any YouTube livestream with native YouTube chat integration. Sign in with your YouTube account to participate in chat.
 
-## Setup
+## 🌟 Features
 
-1. Clone the repository
-2. Copy `.env.example` to `.env` and add your YouTube API key
-3. Install dependencies:
+- Watch YouTube streams with Twitch chat integration
+- Theatre mode for pure YouTube experience
+- Real-time stream status detection
+- Beautiful transitions and UI effects
+- Responsive design for all devices
+- Dark mode optimized
+
+## 🛣️ Roadmap
+
+### Completed
+- ✅ Basic YouTube stream integration
+- ✅ Twitch chat integration
+- ✅ Stream status detection
+- ✅ Theatre mode (Beta)
+- ✅ YouTube chat integration
+- ✅ OAuth2 authentication for YouTube
+- ✅ Offline channel states
+- ✅ Channel avatar support
+
+### Coming Soon
+- 🔄 VOD support for offline channels
+- 🔄 Multiple chat layouts
+- 🔄 Channel emotes support
+- 🔄 Custom themes
+- 🔄 Stream quality selector
+- 🔄 Chat history
+- 🔄 Multi-stream support
+- 🔄 Stream notifications
+
+## 🔧 Development
+
 ```bash
+# Clone the repository
+git clone https://github.com/ravier1/Adrift.git
+
+# Install dependencies
 npm install
-```
-4. Run the development server:
-```bash
+
+# Create .env from example
+cp .env.example .env
+
+# Add your API keys
+# Required: YOUTUBE_API_KEY, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+
+# Run development server
 npm run dev
 ```
 
-## Environment Variables
+## 📝 Environment Variables
 
-- `YOUTUBE_API_KEY`: Your YouTube Data API v3 key
-- `NEXT_PUBLIC_DOMAIN`: Domain for Twitch chat embedding (default: "localhost")
+- `YOUTUBE_API_KEY`: YouTube Data API key
+- `NEXT_PUBLIC_DOMAIN`: Your domain for chat embeds
+- `GOOGLE_CLIENT_ID`: OAuth 2.0 client ID
+- `GOOGLE_CLIENT_SECRET`: OAuth 2.0 client secret
+- `PUBLIC_URL`: Your application URL
 
-## License
+## 🤝 Contributing
 
-MIT License with Commons Clause - See [LICENSE.MD](LICENSE.MD) for details.
+Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
+
+## 📄 License
+
+This project is licensed under the MIT License with Commons Clause - see the [LICENSE.md](LICENSE.md) file for details.
 
 # Adrift 🎥✨
 
