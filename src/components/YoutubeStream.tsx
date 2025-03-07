@@ -6,6 +6,7 @@
 
 // src/components/YoutubeStream.tsx
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 interface YoutubeStreamProps {
   username: string;
@@ -56,6 +57,11 @@ interface StreamStatus {
   channelAvatar?: string;
 }
 
+interface ScrapeResponse {
+  channelName: string;
+  avatarUrl: string;
+}
+
 const YoutubeStream: React.FC<YoutubeStreamProps> = ({ username, onOfflineStatus }) => {
   const [videoId, setVideoId] = useState<string | null>(null);
   const [useFallback, setUseFallback] = useState<boolean>(false);
@@ -88,7 +94,7 @@ const YoutubeStream: React.FC<YoutubeStreamProps> = ({ username, onOfflineStatus
     const fetchChannelInfo = async () => {
       try {
         const response = await fetch(`/api/youtube?action=scrape&username=${cleanUsername}`);
-        const data = await response.json();
+        const data = await response.json() as ScrapeResponse;
         
         if (!data.channelName) {
           // If scraping fails, try using the cleaned username as fallback
@@ -302,9 +308,11 @@ const YoutubeStream: React.FC<YoutubeStreamProps> = ({ username, onOfflineStatus
         <div className="flex flex-col items-center gap-8">
           {streamStatus.channelAvatar && (
             <div className="w-40 h-40 rounded-full overflow-hidden ring-4 ring-white/10">
-              <img 
+              <Image 
                 src={streamStatus.channelAvatar} 
                 alt={streamStatus.channelName || cleanUsername} 
+                width={160}
+                height={160}
                 className="w-full h-full object-cover"
               />
             </div>
@@ -328,9 +336,11 @@ const YoutubeStream: React.FC<YoutubeStreamProps> = ({ username, onOfflineStatus
         <div className="flex flex-col items-center gap-8">
           {streamStatus.channelAvatar && (
             <div className="w-40 h-40 rounded-full overflow-hidden ring-4 ring-white/10 shadow-lg shadow-red-500/20">
-              <img 
+              <Image 
                 src={streamStatus.channelAvatar} 
                 alt={streamStatus.channelName || 'Channel'} 
+                width={160}
+                height={160}
                 className="w-full h-full object-cover"
               />
             </div>

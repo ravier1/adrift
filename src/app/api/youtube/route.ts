@@ -16,6 +16,19 @@ type YouTubeResponse = {
   };
 };
 
+interface ChannelDetailsResponse {
+  items: Array<{
+    snippet?: {
+      title?: string;
+      thumbnails?: {
+        default?: { url?: string };
+        medium?: { url?: string };
+        high?: { url?: string };
+      };
+    };
+  }>;
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const action = searchParams.get("action");
@@ -28,7 +41,7 @@ export async function GET(request: Request) {
   try {
     if (action === "scrape") {
       const response = await axios.get(`https://www.youtube.com/@${username}`);
-      const $ = cheerio.load(response.data);
+      const $ = cheerio.load(response.data as string);
       
       // Get channel name from meta tags
       const channelName = $('meta[property="og:title"]').attr('content');
@@ -72,7 +85,7 @@ export async function GET(request: Request) {
       const response = await fetch(
         `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${env.YOUTUBE_API_KEY}`
       );
-      const data = await response.json();
+      const data = await response.json() as ChannelDetailsResponse;
       return NextResponse.json(data);
     }
 
