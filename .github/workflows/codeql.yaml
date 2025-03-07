@@ -1,4 +1,3 @@
-# .github/workflows/codeql.yaml
 name: "CodeQL"
 
 on:
