@@ -117,28 +117,26 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
         );
         const liveStreamData = await liveStreamResponse.json() as YouTubeSearchResponse;
         
-        // If we found a live stream, use its videoId
-        if (liveStreamData.items && liveStreamData.items.length > 0) {
+        // Fixed type checking for the YouTube API response
+        if (liveStreamData.items?.[0]) {
           const firstItem = liveStreamData.items[0];
-          if (firstItem && firstItem.id) {
-            const liveVideoId = typeof firstItem.id === 'string'
-              ? firstItem.id
-              : (firstItem.id as YouTubeVideoId).videoId;
-              
-            if (liveVideoId) {
-              setVideoId(liveVideoId);
+          const videoIdObj = firstItem.id;
+          
+          // Handle both string and object video IDs
+          const finalVideoId = typeof videoIdObj === 'string' 
+            ? videoIdObj
+            : 'videoId' in videoIdObj ? videoIdObj.videoId : null;
             
-              console.debug(
-                '%c✅ SUCCESS: %cFound livestream with ID: %c' + liveVideoId + '\n' +
-                '%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-                'background: #34A853; color: white; padding: 2px 5px; border-radius: 3px; font-weight: bold;',
-                'color: #34A853;',
-                'color: white; font-weight: bold;',
-                'color: #6441a5; font-weight: bold;'
-              );
-            } else {
-              setUseFallback(true);
-            }
+          if (finalVideoId) {
+            setVideoId(finalVideoId);
+            console.debug(
+              '%c✅ SUCCESS: %cFound livestream with ID: %c' + finalVideoId + '\n' +
+              '%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+              'background: #34A853; color: white; padding: 2px 5px; border-radius: 3px; font-weight: bold;',
+              'color: #34A853;',
+              'color: white; font-weight: bold;',
+              'color: #6441a5; font-weight: bold;'
+            );
           } else {
             setUseFallback(true);
           }
