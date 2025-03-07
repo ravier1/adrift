@@ -1,3 +1,39 @@
+# 🚀 Adrift v0.1.2b
+
+A modern multi-platform streaming companion that lets you watch YouTube streams while keeping up with Twitch chat.
+
+## Features
+
+- 🎮 Watch YouTube streams with embedded Twitch chat
+- 🌈 Smooth page transitions and modern UI
+- 📱 Responsive design for both desktop and mobile
+- ⚡ Built with Next.js 14 and TypeScript
+- 🔄 Auto-fallback to channel uploads if live stream isn't found
+- 🎨 Dark mode by default with purple accents
+- 🚀 Sleek rocket emoji favicon for easy tab identification
+
+## Setup
+
+1. Clone the repository
+2. Copy `.env.example` to `.env` and add your YouTube API key
+3. Install dependencies:
+```bash
+npm install
+```
+4. Run the development server:
+```bash
+npm run dev
+```
+
+## Environment Variables
+
+- `YOUTUBE_API_KEY`: Your YouTube Data API v3 key
+- `NEXT_PUBLIC_DOMAIN`: Domain for Twitch chat embedding (default: "localhost")
+
+## License
+
+MIT License with Commons Clause - See [LICENSE.MD](LICENSE.MD) for details.
+
 # Adrift 🎥✨
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/ravier1)
@@ -119,7 +155,7 @@ Adrift relies on these key dependencies:
 
 ## Support & Contributions
 
-> *Note: Currently using T3 App's default logo - looking for a simple logo design if anyone wants to contribute!* 
+> *Looking for logo design suggestions! Currently using a rocket emoji as our favicon, but open to creative ideas for a unique brand identity. Feel free to contribute your designs or suggestions!* 
 
 ### Donations
 If you find Adrift helpful, consider supporting the project:
