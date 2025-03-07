@@ -1,3 +1,4 @@
+# .github/codeql/codeql-config.yml
 name: "CodeQL-Config"
 
 queries:
@@ -11,4 +12,4 @@ paths:
 
 options:
   - name: "verbosity"
-    value: "debug" # Increased verbosity for better debugging
+    value: "progress++" # Adjusted verbosity level to fit the accepted pattern

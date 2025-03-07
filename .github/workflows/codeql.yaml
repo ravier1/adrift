@@ -1,3 +1,4 @@
+# .github/workflows/codeql.yaml
 name: "CodeQL"
 
 on:
@@ -32,4 +33,4 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
         with:
-          verbosity: 'debug' # Increased verbosity for better debugging
+          verbosity: 'progress++' # Adjusted verbosity level to fit the accepted pattern
