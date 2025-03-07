@@ -1,0 +1,34 @@
+name: Production Deploy & CodeQL Analysis
+
+# Run on a schedule (every 3 days) and also allow manual trigger
+on:
+  schedule:
+    - cron: '0 0 */3 * *'  # At 00:00 UTC every 3rd day
+  workflow_dispatch:
+
+jobs:
+  codeql:
+    name: Run CodeQL Analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: javascript, python
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+      - name: Analyze
+        uses: github/codeql-action/analyze@v2
+
+  deploy:
+    name: Deploy to Vercel Production
+    runs-on: ubuntu-latest
+    needs: codeql
+    steps:
+      - uses: actions/checkout@v3
+      - name: Deploy to Vercel (Production)
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          npx vercel --prod --confirm
