@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { env } from "~/env";
+import axios from 'axios';
+import * as cheerio from 'cheerio';
 
 type YouTubeResponse = {
   items?: Array<{
@@ -24,6 +26,19 @@ export async function GET(request: Request) {
   }
 
   try {
+    if (action === "scrape") {
+      const response = await axios.get(`https://www.youtube.com/@${username}`);
+      const $ = cheerio.load(response.data);
+      
+      // Get channel name from meta tags
+      const channelName = $('meta[property="og:title"]').attr('content');
+      
+      // Get avatar URL from meta tags or other selectors
+      const avatarUrl = $('meta[property="og:image"]').attr('content');
+      
+      return NextResponse.json({ channelName, avatarUrl });
+    }
+
     if (action === "channel") {
       // Get channel info
       const channelResponse = await fetch(
@@ -49,6 +64,16 @@ export async function GET(request: Request) {
       );
       const liveStreamData = await liveStreamResponse.json() as YouTubeResponse;
       return NextResponse.json(liveStreamData);
+    } else if (action === "channelDetails") {
+      const channelId = searchParams.get("channelId");
+      if (!channelId) {
+        return NextResponse.json({ error: "Channel ID required" }, { status: 400 });
+      }
+      const response = await fetch(
+        `https://www.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${env.YOUTUBE_API_KEY}`
+      );
+      const data = await response.json();
+      return NextResponse.json(data);
     }
 
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
