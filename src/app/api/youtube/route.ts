@@ -61,18 +61,30 @@ export async function GET(request: Request) {
     };
 
     if (action === "scrape") {
-      // Scrape channel ID from YouTube page
+      // Scrape channel ID and avatar from YouTube page
       const response = await fetch(`https://www.youtube.com/@${username}`);
       const html = await response.text();
       
       // Find the canonical link using RegExp.exec()
       const channelRegex = /<link rel="canonical" href="https:\/\/www\.youtube\.com\/channel\/(UC[a-zA-Z0-9_-]{22})">/;
       const match = channelRegex.exec(html);
+
+      // Find the avatar URL and channel name
+      const avatarRegex = /<meta property="og:image" content="([^"]+)">/;
+      const nameRegex = /<meta property="og:title" content="([^"]+)">/;
+      
+      const avatarMatch = avatarRegex.exec(html);
+      const nameMatch = nameRegex.exec(html);
+      
       if (!match?.[1]) {
         return NextResponse.json({ error: "Channel ID not found" }, { status: 404 });
       }
       
-      return NextResponse.json({ channelId: match[1] });
+      return NextResponse.json({ 
+        channelId: match[1],
+        avatar: avatarMatch?.[1] ?? null,
+        channelName: nameMatch?.[1] ?? null
+      });
     }
 
     if (action === "channel") {

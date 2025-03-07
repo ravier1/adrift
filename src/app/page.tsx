@@ -1,23 +1,80 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import PageTransition from "~/components/PageTransition";
 import FloatingButton from "~/components/FloatingButton";
+
+interface ChannelInfo {
+  avatar: string | null;
+  channelName: string | null;
+}
+
+interface ScrapeResponse {
+  avatar: string | null;
+  channelName: string | null;
+  error?: string;
+}
 
 export default function HomePage() {
   const [youtubeStreamer, setYoutubeStreamer] = useState("");
   const [twitchStreamer, setTwitchStreamer] = useState("");
+  const [channelInfo, setChannelInfo] = useState<ChannelInfo | null>(null);
+  const [showCopyAnimation, setShowCopyAnimation] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchChannelInfo = async () => {
+      const cleanUsername = youtubeStreamer.replace(/^@/, '');
+      
+      if (cleanUsername.length < 2) {
+        setShowCopyAnimation(false);
+        setTimeout(() => setChannelInfo(null), 500);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/youtube?action=scrape&username=${cleanUsername}`);
+        const data = await response.json() as ScrapeResponse;
+        
+        if (data.avatar || data.channelName) {
+          setShowCopyAnimation(false);
+          setTimeout(() => {
+            setChannelInfo({
+              avatar: data.avatar,
+              channelName: data.channelName
+            });
+            setShowCopyAnimation(true);
+          }, 300);
+        }
+      } catch (error) {
+        console.error('Failed to fetch channel info:', error);
+      }
+    };
+
+    // Create a wrapper function to handle the Promise
+    const handleFetch = () => {
+      void fetchChannelInfo();
+    };
+
+    handleFetch();
+    const timeoutId = setTimeout(handleFetch, 500);
+    return () => clearTimeout(timeoutId);
+  }, [youtubeStreamer]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (youtubeStreamer && twitchStreamer) {
-      router.push(`/stream?yt=@${youtubeStreamer}&tw=${twitchStreamer}`);
+      // Remove @ from both usernames if present and add @ only for YouTube
+      const cleanYoutubeUser = youtubeStreamer.replace(/^@/, '');
+      const cleanTwitchUser = twitchStreamer.replace(/^@/, '');
+      router.push(`/stream?yt=@${cleanYoutubeUser}&tw=${cleanTwitchUser}`);
     }
   };
 
   const handleCopy = () => {
-    setTwitchStreamer(youtubeStreamer);
+    // Remove @ when copying from YouTube to Twitch
+    setTwitchStreamer(youtubeStreamer.replace(/^@/, ''));
   };
 
   return (
@@ -30,15 +87,39 @@ export default function HomePage() {
           </h1>
           
           <div className="flex flex-col gap-6 w-full">
-            <div className="flex flex-col gap-1">
-              <input
-                type="text"
-                placeholder="Enter YouTube username (without @)"
-                value={youtubeStreamer}
-                onChange={(e) => setYoutubeStreamer(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-white/5 text-white placeholder-white/40 backdrop-blur-sm border border-white/20 focus:border-white/40 focus:outline-none transition-all"
-              />
-              <span className="text-white/50 text-sm px-1">For YouTube stream source</span>
+            <div className="flex flex-col items-center gap-4">
+              <div className="h-[140px] flex items-center justify-center">
+                {channelInfo?.avatar && (
+                  <div className={`flex flex-col items-center transition-all duration-300 ${
+                    showCopyAnimation ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95'
+                  }`}>
+                    <div className="relative w-24 h-24 mb-3 animate-float">
+                      <Image
+                        src={channelInfo.avatar}
+                        alt="Channel Avatar"
+                        fill
+                        className="rounded-full object-cover border-2 border-white/20 shadow-lg"
+                        unoptimized // YouTube avatars are already optimized
+                      />
+                    </div>
+                    {channelInfo.channelName && (
+                      <span className="text-white/90 text-lg font-medium">
+                        {channelInfo.channelName}
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col gap-1 w-full">
+                <input
+                  type="text"
+                  placeholder="Enter YouTube username (without @)"
+                  value={youtubeStreamer}
+                  onChange={(e) => setYoutubeStreamer(e.target.value)}
+                  className="w-full px-4 py-3 rounded-xl bg-white/5 text-white placeholder-white/40 backdrop-blur-sm border border-white/20 focus:border-white/40 focus:outline-none transition-all"
+                />
+                <span className="text-white/50 text-sm px-1">For YouTube stream source</span>
+              </div>
             </div>
             
             <button
@@ -54,7 +135,7 @@ export default function HomePage() {
                 type="text"
                 placeholder="Enter Twitch username"
                 value={twitchStreamer}
-                onChange={(e) => setTwitchStreamer(e.target.value)}
+                onChange={(e) => setTwitchStreamer(e.target.value.replace(/^@/, ''))}
                 className="w-full px-4 py-3 rounded-xl bg-white/5 text-white placeholder-white/40 backdrop-blur-sm border border-white/20 focus:border-white/40 focus:outline-none transition-all"
               />
               <span className="text-white/50 text-sm px-1">For Twitch chat integration</span>
@@ -98,6 +179,7 @@ export default function HomePage() {
             <span className="font-bold">Donate</span>
           </span>
         </FloatingButton>
+
       </main>
     </PageTransition>
   );
