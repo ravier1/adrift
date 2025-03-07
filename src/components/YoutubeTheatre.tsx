@@ -4,6 +4,11 @@ interface YoutubeTheatreProps {
   videoId: string;
 }
 
+interface AuthCheckResponse {
+  authenticated: boolean;
+  accessToken: string;
+}
+
 const YoutubeTheatre: React.FC<YoutubeTheatreProps> = ({ videoId }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
@@ -11,9 +16,8 @@ const YoutubeTheatre: React.FC<YoutubeTheatreProps> = ({ videoId }) => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Get auth status and token
         const response = await fetch('/api/youtube/auth/check');
-        const data = await response.json();
+        const data = (await response.json()) as AuthCheckResponse;
         setIsAuthenticated(response.ok);
         if (data.accessToken) {
           setAccessToken(data.accessToken);
