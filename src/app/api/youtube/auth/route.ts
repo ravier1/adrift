@@ -4,7 +4,7 @@ import { env } from "~/env";
 export async function GET() {
   try {
     const scope = 'https://www.googleapis.com/auth/youtube.force-ssl';
-    const redirectUri = `${process.env.NEXT_PUBLIC_URL}/api/youtube/auth/callback`;
+    const redirectUri = `${env.PUBLIC_URL}/api/youtube/auth/callback`; // Use server-side env
     
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
       `client_id=${env.GOOGLE_CLIENT_ID}` +

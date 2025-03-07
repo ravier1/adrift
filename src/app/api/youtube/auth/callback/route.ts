@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
         code,
         client_id: env.GOOGLE_CLIENT_ID,
         client_secret: env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: `${process.env.NEXT_PUBLIC_URL}/api/youtube/auth/callback`,
+        redirect_uri: `${env.PUBLIC_URL}/api/youtube/auth/callback`,
         grant_type: "authorization_code",
       }),
     });
