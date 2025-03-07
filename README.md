@@ -29,8 +29,11 @@ The name "Adrift" refers to moving away from traditional viewing experiences, no
 
 * Responsive Design: Optimized for browsers, desktops, tablets, and mobile devices
 * YouTube Integration: Enter your YouTube username to access live or archived streams
+* Enhanced YouTube Stream Detection: Uses YouTube Data API to accurately find live streams
+* Smart Fallback System: Automatically switches to traditional embed when needed
 * Twitch Chat Integration: Add your Twitch chat username to overlay real-time chat alongside the video
 * Theatre Mode: Experience a distraction-free, cinema-like viewing experience
+* Colorful Debug Console: Easy-to-understand, visual debugging in the browser console
 
 ### Coming Soon
 * 7tv Emote Support: Enrich your chat with popular 7tv emotes
@@ -43,6 +46,7 @@ The name "Adrift" refers to moving away from traditional viewing experiences, no
 * A modern web browser (Chrome, Firefox, Safari, or Edge)
 * Node.js and npm (if building from source)
 * An active internet connection
+* YouTube Data API key (get one from [Google Cloud Console](https://console.cloud.google.com/))
 
 ### Installation
 
@@ -61,12 +65,51 @@ cd adrift
 npm install
 ```
 
-4. Start the Development Server:
+4. Set Up Environment Variables:
+   - Copy `.env.example` to `.env`
+   - Add your YouTube API key
+   - Set your domain (use `localhost` for development)
+
 ```bash
-npm start
+# Create .env file from example
+cp .env.example .env
+
+# Edit the .env file with your values
+NEXT_PUBLIC_YOUTUBE_API_KEY="your_youtube_api_key_here"
+NEXT_PUBLIC_DOMAIN="localhost"
+```
+
+5. Start the Development Server:
+```bash
+npm run dev
 ```
 
 The application will run at http://localhost:3000
+
+## Technical Implementation
+
+### YouTube Stream Detection
+
+Adrift uses a two-tier approach to provide the best possible streaming experience:
+
+1. **Primary: YouTube Data API** - The system first attempts to find the streamer's live stream using the official YouTube Data API for the most accurate results.
+
+2. **Fallback: Traditional Embed** - If the API doesn't find a live stream or encounters any issues, the system automatically falls back to the traditional YouTube embed method.
+
+This dual system ensures you always get the best available stream from your favorite content creators.
+
+## Dependencies
+
+Adrift relies on these key dependencies:
+
+- **Next.js**: React framework for server-rendered applications
+- **React**: UI component library
+- **tmi.js**: Twitch Messaging Interface library for chat integration
+- **@t3-oss/env-nextjs**: Environment variable validation
+- **Zod**: TypeScript-first schema validation
+- **Framer Motion**: Animation library for smooth page transitions
+- **Geist Sans**: Modern, clean font family
+- **Tailwind CSS**: Utility-first CSS framework
 
 ## Usage
 
