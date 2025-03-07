@@ -28,6 +28,22 @@ export default function HomePage() {
             <span className="text-white/90 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">Ad</span>
             <span className="text-[#6441a5] drop-shadow-[0_0_15px_rgba(100,65,165,0.6)]">rift</span>
           </h1>
+
+          {/* Add theatre mode button */}
+          <div className="flex flex-col items-center gap-2">
+            <a 
+              href="/theatre"
+              className="group relative px-6 py-3 rounded-xl bg-gradient-to-r from-white/5 to-red-500/30 hover:from-white/10 hover:to-red-500/40 text-white/80 hover:text-white transition-all duration-300"
+            >
+              <span className="flex items-center gap-2">
+                <span>🎭</span>
+                Try Theatre Mode
+                <span className="text-xs px-2 py-0.5 rounded-full bg-red-500/20 text-red-500">Beta</span>
+              </span>
+              <span className="absolute -z-10 inset-0 blur-xl bg-gradient-to-r from-white/10 to-red-500/30 opacity-50 group-hover:opacity-75 transition-opacity rounded-xl"></span>
+            </a>
+            <span className="text-white/40 text-sm">YouTube Livestream with Chat</span>
+          </div>
           
           <div className="flex flex-col gap-6 w-full">
             <div className="flex flex-col gap-1">
