@@ -1,1 +1,16 @@
+name: "CodeQL-Config"
+
+queries:
+  - uses: github/codeql/javascript-queries@main
+  - uses: github/codeql/typescript-queries@main
+
+paths:
+  - src/
+  - lib/
+  - tests/
+
+# You can specify additional options here if needed, for example:
+# options:
+#   - name: "verbosity"
+#     value: "info"
 
