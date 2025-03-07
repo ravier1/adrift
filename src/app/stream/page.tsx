@@ -41,27 +41,27 @@ const StreamContent = () => {
   }
 
   return (
-    <div className="flex h-screen bg-black overflow-hidden">
-      <div className="flex-grow">
+    <div className="flex flex-col lg:flex-row h-screen bg-black overflow-hidden relative">
+      <div className="relative flex-grow h-[60vh] lg:h-screen">
         <YouTubeStream username={youtubeStreamer} />
+        <Link 
+          href="/"
+          className="absolute top-4 left-1/2 -translate-x-1/2 z-50 px-4 py-2 rounded-full 
+          bg-black/40 hover:bg-black/60 backdrop-blur-md transition-all duration-300 
+          hover:scale-110 border border-[#FF0000]/50
+          shadow-[0_0_10px_rgba(255,0,0,0.3)] hover:shadow-[0_0_15px_rgba(255,0,0,0.5)]"
+        >
+          <span className="flex items-center gap-2 text-white/90">
+            <span>Home</span>
+          </span>
+        </Link>
       </div>
-      <div className="w-96 border-l border-white/10">
+      <div className="h-[40vh] lg:h-screen lg:w-96">
         <TwitchChatEmbed 
           channel={twitchStreamer} 
           parent={env.NEXT_PUBLIC_DOMAIN}
         />
       </div>
-      <FloatingButton 
-        href="/"
-        className="top-4 right-4 z-50"
-      >
-        <span className="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
-            <path fillRule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"/>
-          </svg>
-          <span>Back</span>
-        </span>
-      </FloatingButton>
     </div>
   );
 };
