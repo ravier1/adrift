@@ -1,17 +1,15 @@
 "use client";
-import { useSearchParams } from "next/navigation";
-import PageTransition from "~/components/PageTransition";
-import YoutubeTheatre from "~/components/YoutubeTheatre";
+import { Suspense } from "react";
+import WatchContent from "./WatchContent";
 
-export default function TheatreWatchPage() {
-  const searchParams = useSearchParams();
-  const videoId = searchParams.get('v') ?? '';
-
+export default function WatchPage() {
   return (
-    <PageTransition transitionType="red">
-      <main className="w-screen h-screen flex bg-black overflow-hidden">
-        <YoutubeTheatre videoId={videoId} />
-      </main>
-    </PageTransition>
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-black via-[#2a0000] to-[#ff0000]">
+        <div className="text-white text-2xl">Loading...</div>
+      </div>
+    }>
+      <WatchContent />
+    </Suspense>
   );
 }

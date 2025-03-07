@@ -10,7 +10,8 @@ import Image from 'next/image';
 
 interface YoutubeStreamProps {
   username: string;
-  onOfflineStatus?: (status: boolean) => void;
+  onOfflineStatus: (status: boolean) => void;
+  onVideoIdChange: (newVideoId: string | null) => void;
 }
 
 // Define types for the YouTube API responses
@@ -62,7 +63,7 @@ interface ScrapeResponse {
   avatarUrl: string;
 }
 
-const YoutubeStream: React.FC<YoutubeStreamProps> = ({ username, onOfflineStatus }) => {
+const YoutubeStream: React.FC<YoutubeStreamProps> = ({ username, onOfflineStatus, onVideoIdChange }) => {
   const [videoId, setVideoId] = useState<string | null>(null);
   const [useFallback, setUseFallback] = useState<boolean>(false);
   const [streamStatus, setStreamStatus] = useState<StreamStatus>({
@@ -217,6 +218,7 @@ const YoutubeStream: React.FC<YoutubeStreamProps> = ({ username, onOfflineStatus
             message: 'Stream is offline'
           }));
           onOfflineStatus?.(true);
+          onVideoIdChange(null);
           return;
         }
 
@@ -232,6 +234,7 @@ const YoutubeStream: React.FC<YoutubeStreamProps> = ({ username, onOfflineStatus
           setVideoId(finalVideoId);
           setStreamStatus({ isOffline: false, message: '', channelName, channelId });
           onOfflineStatus?.(false);
+          onVideoIdChange(finalVideoId);
         } else {
           // Invalid video ID - set offline status
           setStreamStatus({ 
@@ -241,6 +244,7 @@ const YoutubeStream: React.FC<YoutubeStreamProps> = ({ username, onOfflineStatus
             channelId
           });
           onOfflineStatus?.(true);
+          onVideoIdChange(null);
         }
       } catch (error) {
         console.error('Stream check failed:', error);
@@ -251,6 +255,7 @@ const YoutubeStream: React.FC<YoutubeStreamProps> = ({ username, onOfflineStatus
           message: 'Stream is offline'
         }));
         onOfflineStatus?.(true);
+        onVideoIdChange(null);
       }
     };
 
@@ -267,7 +272,7 @@ const YoutubeStream: React.FC<YoutubeStreamProps> = ({ username, onOfflineStatus
     };
 
     initialize().catch(console.error);
-  }, [username, cleanUsername, onOfflineStatus]); // Added cleanUsername and onOfflineStatus as dependencies
+  }, [username, cleanUsername, onOfflineStatus, onVideoIdChange]); // Added cleanUsername and onOfflineStatus as dependencies
 
   // Add new useEffect to handle offline status changes
   useEffect(() => {
