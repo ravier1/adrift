@@ -1,4 +1,4 @@
-# 🚀 Adrift v0.1.2b
+# 🚀 Adrift v0.1.3a
 
 A modern multi-platform streaming companion that lets you watch YouTube streams while keeping up with Twitch chat.
 
