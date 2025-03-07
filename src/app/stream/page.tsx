@@ -3,7 +3,6 @@ import { Suspense, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import YoutubeStream from '~/components/YoutubeStream';
 import TwitchChatEmbed from '~/components/TwitchChatEmbed';
-import YoutubeChatEmbed from '~/components/YoutubeChatEmbed';
 import PageTransition from "~/components/PageTransition";
 
 const StreamPage = () => {
@@ -20,9 +19,8 @@ const StreamContent = () => {
   const searchParams = useSearchParams();
   const youtubeStreamer = searchParams.get('yt') ?? '';
   const twitchStreamer = searchParams.get('tw') ?? '';
-  const [isStreamOffline, setIsStreamOffline] = useState(false);
+  const [isStreamOffline, setIsStreamOffline] = useState(true); // Start with true to hide chat initially
   const [videoId, setVideoId] = useState<string | null>(null);
-  const [chatType, setChatType] = useState<'twitch' | 'youtube'>('twitch');
   
   const handleStreamOffline = (status: boolean) => {
     setIsStreamOffline(status);
@@ -42,36 +40,13 @@ const StreamContent = () => {
         />
       </div>
 
-      {!isStreamOffline && (
-        <div className="h-[60vh] w-full landscape:w-[340px] landscape:h-full flex flex-col">
-          <div className="flex justify-center items-center gap-2 p-2 bg-white/5">
-            <button
-              onClick={() => setChatType('twitch')}
-              className={`px-3 py-1 rounded ${
-                chatType === 'twitch' ? 'bg-[#6441a5] text-white' : 'bg-white/10 text-white/60'
-              }`}
-            >
-              Twitch
-            </button>
-            <button
-              onClick={() => setChatType('youtube')}
-              className={`px-3 py-1 rounded ${
-                chatType === 'youtube' ? 'bg-[#ff0000] text-white' : 'bg-white/10 text-white/60'
-              }`}
-            >
-              YouTube
-            </button>
-          </div>
-          <div className="flex-1">
-            {chatType === 'twitch' ? (
-              <TwitchChatEmbed 
-                channel={twitchStreamer} 
-                parent={process.env.NEXT_PUBLIC_DOMAIN ?? 'localhost'} 
-              />
-            ) : (
-              <YoutubeChatEmbed videoId={videoId} />
-            )}
-          </div>
+      {/* Only show Twitch chat if stream is confirmed online */}
+      {!isStreamOffline && videoId && twitchStreamer && (
+        <div className="h-[60vh] w-full landscape:w-[340px] landscape:h-full">
+          <TwitchChatEmbed 
+            channel={twitchStreamer} 
+            parent={process.env.NEXT_PUBLIC_DOMAIN ?? 'localhost'} 
+          />
         </div>
       )}
     </main>
