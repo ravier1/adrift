@@ -35,14 +35,22 @@ interface YouTubeSearchResponse {
   items?: YouTubeSearchItem[];
 }
 
+interface ScrapeResponse {
+  channelId?: string;
+  error?: string;
+}
+
 const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
   const [videoId, setVideoId] = useState<string | null>(null);
+  const [channelId, setChannelId] = useState<string | null>(null);
   const [useFallback, setUseFallback] = useState<boolean>(false);
   const cleanUsername = username.replace(/^@/, '');
   
-  // Fallback embed URL using the old method
-  const fallbackEmbedUrl = `https://www.youtube.com/embed?frame=1&listType=user_uploads&list=${cleanUsername}&live=1&autoplay=1`;
-  
+  // Updated fallback embed URL using channel ID
+  const fallbackEmbedUrl = channelId 
+    ? `https://www.youtube.com/embed/live_stream?channel=${channelId}`
+    : `https://www.youtube.com/embed?frame=1&listType=user_uploads&list=${cleanUsername}&live=1&autoplay=1`;
+
   useEffect(() => {
     if (!username) return;
     
@@ -67,11 +75,32 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
         const channelResponse = await fetch(
           `/api/youtube?action=channel&username=${cleanUsername}`
         );
+
+        // Handle rate limit error
+        if (channelResponse.status === 429) {
+          console.debug(
+            '%c⚠️ RATE LIMIT: %cAPI quota exceeded, falling back to channel ID method...',
+            'background: #FF5722; color: white; padding: 2px 5px; border-radius: 3px; font-weight: bold;',
+            'color: #FF5722;'
+          );
+          
+          // Try scraping method immediately
+          const scrapeResponse = await fetch(
+            `/api/youtube?action=scrape&username=${cleanUsername}`
+          );
+          const scrapeData = (await scrapeResponse.json()) as ScrapeResponse;
+          if (scrapeData.channelId) {
+            setChannelId(scrapeData.channelId);
+            setUseFallback(true);
+            return;
+          }
+        }
+        
         const channelData = await channelResponse.json() as YouTubeChannelResponse;
         
         // If no channel found, try searching for the channel
-        let channelId = channelData.items?.[0]?.id;
-        if (!channelId) {
+        let foundChannelId = channelData.items?.[0]?.id;
+        if (!foundChannelId) {
           console.debug(
             '%c⚠️ Channel not found directly. Trying search API...',
             'color: #fbbc05; font-style: italic;'
@@ -83,12 +112,26 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
           const searchData = await searchResponse.json() as YouTubeSearchResponse;
           
           const firstItem = searchData.items?.[0];
-          channelId = typeof firstItem?.id === 'string' 
+          foundChannelId = typeof firstItem?.id === 'string' 
             ? firstItem.id 
-            : (firstItem?.id as YouTubeVideoId)?.videoId || firstItem?.snippet?.channelId || '';
+            : firstItem?.snippet?.channelId || '';
+            
+          // If still no channel ID, try scraping method
+          if (!foundChannelId) {
+            console.debug(
+              '%c⚠️ Channel not found via API. Trying scrape method...',
+              'color: #fbbc05; font-style: italic;'
+            );
+            
+            const scrapeResponse = await fetch(
+              `/api/youtube?action=scrape&username=${cleanUsername}`
+            );
+            const scrapeData = (await scrapeResponse.json()) as ScrapeResponse;
+            foundChannelId = scrapeData.channelId ?? '';
+          }
         }
         
-        if (!channelId) {
+        if (!foundChannelId) {
           console.debug(
             '%c❌ FAILED: %cCould not find channel ID for %c' + cleanUsername,
             'background: #EA4335; color: white; padding: 2px 5px; border-radius: 3px; font-weight: bold;',
@@ -99,8 +142,11 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
           return;
         }
         
+        // Store the channel ID for fallback use
+        setChannelId(foundChannelId);
+        
         console.debug(
-          '%c✅ SUCCESS: %cFound channel ID: %c' + channelId,
+          '%c✅ SUCCESS: %cFound channel ID: %c' + foundChannelId,
           'background: #34A853; color: white; padding: 2px 5px; border-radius: 3px; font-weight: bold;',
           'color: #34A853;',
           'color: white; font-weight: bold;'
@@ -113,7 +159,7 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
         );
         
         const liveStreamResponse = await fetch(
-          `/api/youtube?action=live&username=${cleanUsername}&channelId=${channelId}`
+          `/api/youtube?action=live&username=${cleanUsername}&channelId=${foundChannelId}`
         );
         const liveStreamData = await liveStreamResponse.json() as YouTubeSearchResponse;
         
@@ -142,7 +188,7 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
           }
         } else {
           console.debug(
-            '%c⚠️ WARNING: %cNo livestream found for channel: %c' + channelId,
+            '%c⚠️ WARNING: %cNo livestream found for channel: %c' + foundChannelId,
             'background: #FBBC05; color: white; padding: 2px 5px; border-radius: 3px; font-weight: bold;',
             'color: #FBBC05;',
             'color: white; font-weight: bold;'
@@ -166,29 +212,56 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
   // Debug message for which method is being used
   useEffect(() => {
     if (useFallback) {
-      console.debug(
-        '%c📺 FALLBACK MODE %c\n' +
-        'Using the traditional embed method\n' +
-        '%c' + fallbackEmbedUrl + '\n' +
-        '%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-        'background: #FBBC05; color: black; padding: 3px 7px; border-radius: 3px; font-weight: bold;',
-        'color: #FBBC05; font-weight: bold;',
-        'color: #cccccc; font-style: italic;',
-        'color: #6441a5; font-weight: bold;'
-      );
+      if (channelId) {
+        console.debug(
+          '%c📺 EXPERIMENTAL - DIRECT CHANNEL METHOD %c\n' +
+          '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+          '%cUsing experimental direct channel ID embed method\n' +
+          '%cChannel ID: %c' + channelId + '\n' +
+          '%cEmbed URL: %c' + fallbackEmbedUrl + '\n' +
+          '%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+          'background: #6441a5; color: white; padding: 3px 7px; border-radius: 3px; font-weight: bold;',
+          'color: #6441a5;',
+          'color: #cccccc;',
+          'color: #cccccc;', 'color: #ffffff; font-weight: bold;',
+          'color: #cccccc;', 'color: #ffffff; font-style: italic;',
+          'color: #6441a5; font-weight: bold;'
+        );
+      } else {
+        console.debug(
+          '%c📺 FALLBACK MODE - TRADITIONAL METHOD %c\n' +
+          '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+          '%cUsing traditional user uploads embed method\n' +
+          '%cUsername: %c' + cleanUsername + '\n' +
+          '%cEmbed URL: %c' + fallbackEmbedUrl + '\n' +
+          '%c⚠️ If stream doesn\'t load, please report at: %chttps://github.com/ravier1/adrift/issues\n' +
+          '%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
+          'background: #FF5722; color: white; padding: 3px 7px; border-radius: 3px; font-weight: bold;',
+          'color: #FF5722;',
+          'color: #cccccc;',
+          'color: #cccccc;', 'color: #ffffff; font-weight: bold;',
+          'color: #cccccc;', 'color: #ffffff; font-style: italic;',
+          'color: #EA4335;', 'color: #4285f4; text-decoration: underline;',
+          'color: #6441a5; font-weight: bold;'
+        );
+      }
     } else if (videoId) {
       console.debug(
-        '%c🎬 DIRECT MODE %c\n' +
-        'Using the direct video ID embed method\n' +
-        '%c' + videoId + '\n' +
+        '%c🎬 YOUTUBE DATA API V3 METHOD %c\n' +
+        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n' +
+        '%cUsing official YouTube Data API v3\n' +
+        '%cVideo ID: %c' + videoId + '\n' +
+        '%cEmbed URL: %chttps://www.youtube.com/embed/' + videoId + '?autoplay=1\n' +
         '%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
         'background: #34A853; color: white; padding: 3px 7px; border-radius: 3px; font-weight: bold;',
-        'color: #34A853; font-weight: bold;',
-        'color: #cccccc; font-style: italic;',
+        'color: #34A853;',
+        'color: #cccccc;',
+        'color: #cccccc;', 'color: #ffffff; font-weight: bold;',
+        'color: #cccccc;', 'color: #ffffff; font-style: italic;',
         'color: #6441a5; font-weight: bold;'
       );
     }
-  }, [useFallback, videoId, fallbackEmbedUrl]);
+  }, [useFallback, videoId, channelId, cleanUsername, fallbackEmbedUrl]);
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>

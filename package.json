@@ -1,6 +1,6 @@
 {
   "name": "adrift",
-  "version": "0.1.2b",
+  "version": "0.1.3a",
   "private": true,
   "type": "module",
   "scripts": {
