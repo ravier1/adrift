@@ -4,11 +4,14 @@
 /* eslint-disable @typescript-eslint/prefer-optional-chain */
 /* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
 
-// src/components/YouTubeStream.tsx
+// src/components/YoutubeStream.tsx
 import React, { useEffect, useState } from 'react';
+import Image from 'next/image';
 
-interface YouTubeStreamProps {
+interface YoutubeStreamProps {
   username: string;
+  onOfflineStatus: (status: boolean) => void;
+  onVideoIdChange: (newVideoId: string | null) => void;
 }
 
 // Define types for the YouTube API responses
@@ -35,9 +38,41 @@ interface YouTubeSearchResponse {
   items?: YouTubeSearchItem[];
 }
 
-const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
+interface YouTubeChannelDetails {
+  items?: Array<{
+    snippet?: {
+      title?: string;
+      thumbnails?: {
+        default?: { url: string };
+        medium?: { url: string }; // Use medium size for better quality
+      };
+    };
+  }>;
+}
+
+interface StreamStatus {
+  isOffline: boolean;
+  message: string;
+  channelName?: string;
+  channelId?: string;
+  channelAvatar?: string;
+}
+
+interface ScrapeResponse {
+  channelName: string;
+  avatarUrl: string;
+}
+
+const YoutubeStream: React.FC<YoutubeStreamProps> = ({ username, onOfflineStatus, onVideoIdChange }) => {
   const [videoId, setVideoId] = useState<string | null>(null);
   const [useFallback, setUseFallback] = useState<boolean>(false);
+  const [streamStatus, setStreamStatus] = useState<StreamStatus>({
+    isOffline: false,
+    message: '',
+    channelName: '',
+    channelId: ''
+  });
+  const [isLoading, setIsLoading] = useState(true);
   const cleanUsername = username.replace(/^@/, '');
   
   // Fallback embed URL using the old method
@@ -45,6 +80,7 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
   
   useEffect(() => {
     if (!username) return;
+    setIsLoading(true); // Start loading
     
     // Cool debug header for the component
     console.debug(
@@ -56,6 +92,37 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
       'color: #cccccc;', 'color: #ffffff; font-weight: bold;'
     );
     
+    const fetchChannelInfo = async () => {
+      try {
+        const response = await fetch(`/api/youtube?action=scrape&username=${cleanUsername}`);
+        const data = await response.json() as ScrapeResponse;
+        
+        if (!data.channelName) {
+          // If scraping fails, try using the cleaned username as fallback
+          setStreamStatus(prev => ({
+            ...prev,
+            channelName: cleanUsername,
+            isOffline: true,
+            message: 'Checking stream status...'
+          }));
+        } else {
+          setStreamStatus(prev => ({
+            ...prev,
+            channelName: data.channelName,
+            channelAvatar: data.avatarUrl
+          }));
+        }
+      } catch (error) {
+        console.error('Failed to fetch channel info:', error);
+        setStreamStatus(prev => ({
+          ...prev,
+          channelName: cleanUsername,
+          isOffline: true,
+          message: 'Checking stream status...'
+        }));
+      }
+    };
+
     const fetchLiveStream = async () => {
       try {
         // Step 1: Get the channel ID from the username
@@ -71,6 +138,32 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
         
         // If no channel found, try searching for the channel
         let channelId = channelData.items?.[0]?.id;
+        let channelName = '';
+        if (channelId) {
+          try {
+            const channelDetailsResponse = await fetch(
+              `/api/youtube?action=channelDetails&channelId=${channelId}`
+            );
+            const channelDetails = await channelDetailsResponse.json() as YouTubeChannelDetails;
+            const channelData = channelDetails.items?.[0]?.snippet;
+            
+            if (channelData) {
+              channelName = channelData.title || cleanUsername;
+              // Use medium thumbnail for better quality, fallback to default if not available
+              const channelAvatar = channelData.thumbnails?.medium?.url || 
+                                  channelData.thumbnails?.default?.url;
+              
+              setStreamStatus(prev => ({ 
+                ...prev, 
+                channelName, 
+                channelId, 
+                channelAvatar 
+              }));
+            }
+          } catch (error) {
+            console.error('Failed to fetch channel details:', error);
+          }
+        }
         if (!channelId) {
           console.debug(
             '%c⚠️ Channel not found directly. Trying search API...',
@@ -117,51 +210,74 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
         );
         const liveStreamData = await liveStreamResponse.json() as YouTubeSearchResponse;
         
-        // Fixed type checking for the YouTube API response
-        if (liveStreamData.items?.[0]) {
-          const firstItem = liveStreamData.items[0];
-          const videoIdObj = firstItem.id;
-          
-          // Handle both string and object video IDs
-          const finalVideoId = typeof videoIdObj === 'string' 
-            ? videoIdObj
-            : 'videoId' in videoIdObj ? videoIdObj.videoId : null;
+        if (!liveStreamData.items?.length) {
+          // No live stream found - ensure we preserve avatar URL and name
+          setStreamStatus(prev => ({ 
+            ...prev,
+            isOffline: true, 
+            message: 'Stream is offline'
+          }));
+          onOfflineStatus?.(true);
+          onVideoIdChange(null);
+          return;
+        }
+
+        // Found a live stream - continue with normal logic
+        const firstItem = liveStreamData.items[0];
+        const videoIdObj = firstItem?.id;
+        
+        const finalVideoId = typeof videoIdObj === 'string' 
+          ? videoIdObj
+          : videoIdObj && 'videoId' in videoIdObj ? videoIdObj.videoId : null;
             
-          if (finalVideoId) {
-            setVideoId(finalVideoId);
-            console.debug(
-              '%c✅ SUCCESS: %cFound livestream with ID: %c' + finalVideoId + '\n' +
-              '%c━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━',
-              'background: #34A853; color: white; padding: 2px 5px; border-radius: 3px; font-weight: bold;',
-              'color: #34A853;',
-              'color: white; font-weight: bold;',
-              'color: #6441a5; font-weight: bold;'
-            );
-          } else {
-            setUseFallback(true);
-          }
+        if (finalVideoId) {
+          setVideoId(finalVideoId);
+          setStreamStatus({ isOffline: false, message: '', channelName, channelId });
+          onOfflineStatus?.(false);
+          onVideoIdChange(finalVideoId);
         } else {
-          console.debug(
-            '%c⚠️ WARNING: %cNo livestream found for channel: %c' + channelId,
-            'background: #FBBC05; color: white; padding: 2px 5px; border-radius: 3px; font-weight: bold;',
-            'color: #FBBC05;',
-            'color: white; font-weight: bold;'
-          );
-          setUseFallback(true);
+          // Invalid video ID - set offline status
+          setStreamStatus({ 
+            isOffline: true, 
+            message: 'Channel is offline',
+            channelName,
+            channelId
+          });
+          onOfflineStatus?.(true);
+          onVideoIdChange(null);
         }
       } catch (error) {
-        console.error(
-          '%c❌ ERROR: %cFailed to fetch YouTube data:',
-          'background: #EA4335; color: white; padding: 2px 5px; border-radius: 3px; font-weight: bold;',
-          'color: #EA4335;',
-          error
-        );
-        setUseFallback(true);
+        console.error('Stream check failed:', error);
+        // On error, preserve any existing channel info
+        setStreamStatus(prev => ({ 
+          ...prev,
+          isOffline: true, 
+          message: 'Stream is offline'
+        }));
+        onOfflineStatus?.(true);
+        onVideoIdChange(null);
       }
     };
 
-    fetchLiveStream().catch(console.error);
-  }, [username, cleanUsername]); // Added cleanUsername as dependency
+    // First fetch channel info, then check live status
+    const initialize = async () => {
+      await fetchChannelInfo();
+      await fetchLiveStream();
+      setIsLoading(false); // Done loading
+      // Update only the message while preserving other state
+      setStreamStatus(prev => ({
+        ...prev,
+        message: 'Stream is offline'
+      }));
+    };
+
+    initialize().catch(console.error);
+  }, [username, cleanUsername, onOfflineStatus, onVideoIdChange]); // Added cleanUsername and onOfflineStatus as dependencies
+
+  // Add new useEffect to handle offline status changes
+  useEffect(() => {
+    onOfflineStatus?.(streamStatus.isOffline);
+  }, [streamStatus.isOffline, onOfflineStatus]);
 
   // Debug message for which method is being used
   useEffect(() => {
@@ -190,6 +306,66 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
     }
   }, [useFallback, videoId, fallbackEmbedUrl]);
 
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#330000] via-[#1a0f26] to-black">
+        <div className="flex flex-col items-center gap-8">
+          {streamStatus.channelAvatar && (
+            <div className="w-40 h-40 rounded-full overflow-hidden ring-4 ring-white/10">
+              <Image 
+                src={streamStatus.channelAvatar} 
+                alt={streamStatus.channelName || cleanUsername} 
+                width={160}
+                height={160}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+          <div className="text-center space-y-4">
+            <h1 className="text-5xl font-bold text-white">
+              {streamStatus.channelName || cleanUsername}
+            </h1>
+            <p className="text-2xl text-white/80">
+              Checking stream status...
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (streamStatus.isOffline) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#330000] via-[#1a0f26] to-black">
+        <div className="flex flex-col items-center gap-8">
+          {streamStatus.channelAvatar && (
+            <div className="w-40 h-40 rounded-full overflow-hidden ring-4 ring-white/10 shadow-lg shadow-red-500/20">
+              <Image 
+                src={streamStatus.channelAvatar} 
+                alt={streamStatus.channelName || 'Channel'} 
+                width={160}
+                height={160}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+          <div className="text-center">
+            <h1 className="text-5xl font-bold text-white mb-4">
+              {streamStatus.channelName || 'Channel'}
+            </h1>
+            <p className="text-2xl text-white/80 mb-4">
+              is offline 😴
+            </p>
+            <p className="text-lg text-white/60 italic">
+              VOD support is coming soon
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
       <iframe
@@ -209,4 +385,4 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
   );
 };
 
-export default YouTubeStream;
+export default YoutubeStream;
