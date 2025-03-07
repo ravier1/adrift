@@ -18,6 +18,8 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const redirectUri = 'https://adrift-five.vercel.app/api/youtube/auth/callback';
+
     const tokenResponse = await fetch("https://oauth2.googleapis.com/token", {
       method: "POST",
       headers: {
@@ -27,7 +29,7 @@ export async function GET(request: NextRequest) {
         code,
         client_id: env.GOOGLE_CLIENT_ID,
         client_secret: env.GOOGLE_CLIENT_SECRET,
-        redirect_uri: `${env.PUBLIC_URL}/api/youtube/auth/callback`,
+        redirect_uri: redirectUri,
         grant_type: "authorization_code",
       }),
     });

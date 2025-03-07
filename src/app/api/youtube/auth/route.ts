@@ -4,7 +4,7 @@ import { env } from "~/env";
 export async function GET() {
   try {
     const scope = 'https://www.googleapis.com/auth/youtube.force-ssl';
-    const redirectUri = `${env.PUBLIC_URL}/api/youtube/auth/callback`; // Use server-side env
+    const redirectUri = 'https://adrift-five.vercel.app/api/youtube/auth/callback';
     
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
       `client_id=${env.GOOGLE_CLIENT_ID}` +
@@ -13,7 +13,6 @@ export async function GET() {
       `&scope=${encodeURIComponent(scope)}` +
       `&access_type=offline`;
 
-    // Instead of returning JSON, redirect directly to Google's auth page
     return NextResponse.redirect(authUrl);
   } catch (error) {
     console.error('Auth error:', error);
