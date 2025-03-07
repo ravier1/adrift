@@ -1,15 +1,16 @@
-# .github/codeql/codeql-config.yml
-name: "CodeQL-Config"
+name: "Custom CodeQL Configuration"
 
 queries:
-  - uses: github/codeql/javascript-queries@main
-  - uses: github/codeql/typescript-queries@main
+  - uses: security-and-quality
 
 paths:
-  - src/
-  - lib/
-  - tests/
-
-options:
-  - name: "verbosity"
-    value: "progress++" # Adjusted verbosity level to fit the accepted pattern
+  - src
+  - app
+  - lib
+  - components
+paths-ignore:
+  - node_modules
+  - '**/*.test.ts'
+  - '**/*.test.tsx'
+  - '**/*.spec.ts'
+  - '**/*.spec.tsx'
