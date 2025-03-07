@@ -36,7 +36,7 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
         );
         
         const channelResponse = await fetch(
-          `https://www.googleapis.com/youtube/v3/channels?part=id&forUsername=${cleanUsername}&key=${env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+          `/api/youtube?action=channel&username=${cleanUsername}`
         );
         const channelData = await channelResponse.json();
         
@@ -49,7 +49,7 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
           );
           
           const searchResponse = await fetch(
-            `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${cleanUsername}&type=channel&key=${env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+            `/api/youtube?action=search&username=${cleanUsername}`
           );
           const searchData = await searchResponse.json();
           channelId = searchData.items?.[0]?.id?.channelId || searchData.items?.[0]?.snippet?.channelId;
@@ -80,7 +80,7 @@ const YouTubeStream: React.FC<YouTubeStreamProps> = ({ username }) => {
         );
         
         const liveStreamResponse = await fetch(
-          `https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&eventType=live&type=video&key=${env.NEXT_PUBLIC_YOUTUBE_API_KEY}`
+          `/api/youtube?action=live&username=${cleanUsername}&channelId=${channelId}`
         );
         const liveStreamData = await liveStreamResponse.json();
         
